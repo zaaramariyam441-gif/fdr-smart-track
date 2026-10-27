@@ -6,3 +6,4 @@ python-dotenv>=1.0,<2.0
 reportlab>=4.0,<5.0
 email-validator>=2.0,<3.0
 waitress>=3.0,<4.0
+gunicorn>=23.0,<24.0
