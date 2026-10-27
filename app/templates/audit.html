@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Audit trail · FDR SMARTTRACK{% endblock %}
+{% block breadcrumb %}Audit trail{% endblock %}
+{% block content %}
+<div class="page-heading"><div><div class="section-kicker">ADMINISTRATOR ONLY</div><h1>Audit trail</h1><p>Traceable application actions. Passwords and secret configuration are never recorded.</p></div></div>
+<section class="panel table-panel"><div class="table-caption"><span>Latest <b>{{ logs|length }}</b> events</span><span>Read-only view</span></div><div class="table-scroll"><table><thead><tr><th>WHEN</th><th>USER</th><th>ACTION</th><th>ENTITY</th><th>DESCRIPTION</th></tr></thead><tbody>{% for log in logs %}<tr><td>{{ log.created_at.strftime('%d %b %Y, %H:%M') }}</td><td>{{ log.user.username if log.user else 'System' }}</td><td><span class="status upcoming">{{ log.action|title }}</span></td><td>{{ log.entity_type }}{% if log.entity_id %} · {{ log.entity_id }}{% endif %}</td><td>{{ log.description }}</td></tr>{% else %}<tr><td colspan="5"><div class="empty-state"><h3>No activity yet</h3><p>Actions will be recorded here.</p></div></td></tr>{% endfor %}</tbody></table></div></section>
+{% endblock %}

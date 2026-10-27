@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <title>{% block title %}FDR SMARTTRACK{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body>
+{% if current_user.is_authenticated %}
+  <div class="shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="{{ url_for('main.dashboard') }}"><span class="brand-mark">F</span><span><b>FDR</b> SMARTTRACK<small>FINANCE OPERATIONS</small></span></a>
+      <div class="nav-label">WORKSPACE</div>
+      <nav class="side-nav">
+        <a href="{{ url_for('main.dashboard') }}" class="{{ 'active' if request.endpoint == 'main.dashboard' else '' }}"><span>◫</span> Overview</a>
+        <a href="{{ url_for('main.fdr_list') }}" class="{{ 'active' if request.endpoint in ['main.fdr_list','main.fdr_detail','main.fdr_edit'] else '' }}"><span>▤</span> FDR Register</a>
+        <a href="{{ url_for('main.fdr_new') }}"><span>＋</span> Add new FDR</a>
+        <a href="{{ url_for('main.maturities') }}" class="{{ 'active' if request.endpoint == 'main.maturities' else '' }}"><span>▦</span> Maturity calendar</a>
+        <a href="{{ url_for('main.documents') }}" class="{{ 'active' if request.endpoint == 'main.documents' else '' }}"><span>▧</span> Documents</a>
+        <a href="{{ url_for('main.notifications') }}" class="{{ 'active' if request.endpoint == 'main.notifications' else '' }}"><span>◉</span> Notifications {% if unread_count %}<em>{{ unread_count }}</em>{% endif %}</a>
+        <a href="{{ url_for('main.reports') }}" class="{{ 'active' if request.endpoint in ['main.reports','main.report_pdf'] else '' }}"><span>▥</span> Reports</a>
+        {% if current_user.is_admin %}
+        <div class="nav-label nav-gap">ADMINISTRATION</div>
+        <a href="{{ url_for('main.audit_logs') }}"><span>◷</span> Audit trail</a>
+        <a href="{{ url_for('main.users') }}"><span>♙</span> User management</a>
+        {% endif %}
+        <a href="{{ url_for('main.settings') }}"><span>⚙</span> Settings</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="security-note"><span class="secure-dot"></span><span><b>Secure workspace</b><small>Access is role controlled</small></span></div>
+        <form action="{{ url_for('main.logout') }}" method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="nav-logout" type="submit">↗ &nbsp; Sign out</button></form>
+      </div>
+    </aside>
+    <main class="main-area">
+      <header class="topbar">
+        <button class="icon-button mobile-menu" type="button" aria-label="Toggle navigation" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+        <div class="crumb">Workspace <span>/</span> {% block breadcrumb %}Overview{% endblock %}</div>
+        <div class="top-actions">
+          <span class="today-label">{{ today.strftime('%a, %d %b %Y') }}</span>
+          <a class="icon-button notification-button" aria-label="Notifications" href="{{ url_for('main.notifications') }}">♧{% if unread_count %}<i>{{ unread_count }}</i>{% endif %}</a>
+          <button class="icon-button" id="theme-toggle" type="button" aria-label="Switch theme">◐</button>
+          <div class="profile-chip"><span class="avatar">{{ current_user.username[:1].upper() }}</span><span class="profile-name">{{ current_user.username }}<small>{{ current_user.role|title }}</small></span></div>
+        </div>
+      </header>
+      <section class="page-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}<div class="flash-stack">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}<button type="button" aria-label="Dismiss" onclick="this.parentElement.remove()">×</button></div>{% endfor %}</div>{% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+      </section>
+      <footer class="footer">FDR SMARTTRACK <span>·</span> Institutional deposit operations <span class="footer-right">Synthetic data is clearly marked</span></footer>
+    </main>
+  </div>
+{% else %}
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}<div class="public-flashes">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}
+  {% endwith %}
+  {% block public_content %}{% endblock %}
+{% endif %}
+<script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+</body>
+</html>

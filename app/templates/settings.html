@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Settings · FDR SMARTTRACK{% endblock %}
+{% block breadcrumb %}Settings{% endblock %}
+{% block content %}
+<div class="page-heading"><div><div class="section-kicker">WORKSPACE PREFERENCES</div><h1>Settings</h1><p>Application configuration is controlled by the deployment environment.</p></div></div>
+<section class="settings-grid"><div class="panel settings-card"><span class="kpi-icon blue">◐</span><h2>Appearance</h2><p>Switch between the dark and light interface with the theme control in the top navigation. Your choice is saved in this browser.</p><button class="button button-outline" type="button" onclick="document.getElementById('theme-toggle').click()">Toggle theme</button></div><div class="panel settings-card"><span class="kpi-icon violet">◷</span><h2>Maturity reminders</h2><p>In-app reminder thresholds are configured in the environment. Run the reminder command on a schedule in production.</p><code>{{ config['REMINDER_THRESHOLDS']|join(', ') }} days · {{ config['APP_TIMEZONE'] }}</code><a class="button button-outline" href="{{ url_for('main.notifications') }}">Open notification center</a></div><div class="panel settings-card"><span class="kpi-icon green">▧</span><h2>Private file storage</h2><p>Uploaded files are stored outside the static web directory and require an authenticated download route.</p><a class="button button-outline" href="{{ url_for('main.documents') }}">View documents</a></div></section>
+{% endblock %}
